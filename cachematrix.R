@@ -1,34 +1,46 @@
-## Put comments here that give an overall description of what your
-## functions do
+## Taking the inverse of a matrix is very computationally expensive.
+## In the case where we have to compute the inverse multiple times 
+## of the same matrix, we will cache inverse so if needed again we
+##  do not have to compute but only fetch it from the cache.
 
-## Write a short comment describing this function
+## Creates a special "matrix", which is really a list containing functions to
+## set the value of the matrix
+## get the value of the matrix
+## set the value of the inverse
+## set the value of the mean
+## Assume the matrix is invertible. 
 
 makeCacheMatrix <- function(x = matrix()) {
-        m <- NULL
+        ## placeholder for a future value
+        inv <- NULL
+        ## defines a functions to set y to a new matrix y and resets the inv to NULL
         set <- function(y) {
+                ## double arrow operator can modify variables in the parent level
                 x <<- y
-                m <<- NULL
+                inv <<- NULL
         }
-        get <- function() x
-        setmean <- function(mean) m <<- mean
-        getmean <- function() m
+        get <- function() {x}
+        setinverse <- function(inverse) {inv <<- inverse}
+        getinverse <- function() {inv}
         list(set = set, get = get,
-             setmean = setmean,
-             getmean = getmean)
+             setinverse = setinverse,
+             getinverse = getinverse)
 }
 
 
-## Write a short comment describing this function
+## Return a matrix that is the inverse of 'x'
+## First checks if inverse has already been calculated
+## If yes, it gets the inverse from the cache 
+## Otherwise, it computes the inverse of the matrix using the solve command
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
-        m <- x$getmean()
-        if(!is.null(m)) {
-                message("getting cached data")
-                return(m)
+        inv <- x$getinverse()
+        if(!is.null(inv)) {
+                message("getting the cached inverse")
+                return(inv)
         }
         data <- x$get()
-        m <- mean(data, ...)
-        x$setmean(m)
-        m
+        inv <- solve(data, ...)
+        x$setinverse(inv)
+        inv
 }
